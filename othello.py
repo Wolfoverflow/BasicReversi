@@ -1,10 +1,8 @@
 board = [['.' for x in range(8)] for y in range(8)]    # Creates the board
-board[3][3] = 'W'
-board[4][4] = 'W'
-board[3][4] = 'B'
-board[4][3] = 'B'
-
-turn = "W"    # Sets the starting turn
+board[3][3] = 'B'
+board[4][4] = 'B'
+board[3][4] = 'W'
+board[4][3] = 'W'
 
 directions = ((-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1))    # All the directions that are used to check for flips
 
@@ -30,9 +28,12 @@ def singleplayer(difficulty):    # Singleplayer mode with 3 difficulties
     pass
 
 def multiplayer():    # Multiplayer mode's main function, changes turns and calls other functions
+    
+    turn = "W"
+    
     while not game_over(board, turn):
-        
-        print_board(board)
+
+        print_board(board, turn)
         
         move = get_move()
         
@@ -50,7 +51,7 @@ def multiplayer():    # Multiplayer mode's main function, changes turns and call
         count_points(board)
         print("\nGame over!")
         
-def print_board(board):    # Prints the board
+def print_board(board, turn):    # Prints the board
     for ycount, row in enumerate(board):
         print(f'{ycount+1} {" ".join(row)}')
     print("\n  A B C D E F G H")
