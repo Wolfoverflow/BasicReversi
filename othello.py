@@ -1,8 +1,8 @@
 board = [['.' for x in range(8)] for y in range(8)]    # Creates the board
-board[3][3] = 'B'
-board[4][4] = 'B'
-board[3][4] = 'W'
-board[4][3] = 'W'
+board[3][3] = 'W'
+board[4][4] = 'W'
+board[3][4] = 'B'
+board[4][3] = 'B'
 
 directions = ((-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1))    # All the directions that are used to check for flips
 
@@ -11,15 +11,15 @@ def main():
     menu()
     
 def menu():    # Asks the user which mode they want to play
-    menu_select = None
-    while not menu_select:
-        menu_select = int(input("\n1. Singleplayer\n2. Multiplayer\n > "))
-        match menu_select:
-            case 1:
-                difficulty = input("\nSingle-player\nSelect difficulty:\n1. Easy\n2. Intermediate\n3. Hard\n > ")
-                singleplayer(difficulty)
-            case 2:
-                multiplayer()
+    menu_select = int(input("\n1. Singleplayer\n2. Multiplayer\n3. How to play\n > "))
+    if menu_select == 1:
+        difficulty = input("\nSingle-player\nSelect difficulty:\n1. Easy\n2. Intermediate\n3. Hard\n > ")
+        singleplayer(difficulty)
+    if menu_select == 2:
+        multiplayer()
+    if menu_select == 3:
+        print("\nHow to play:\n\nThe game is played on a board with 8 rows and 8 columns, with a total of 64 squares.\nEach player has 32 pieces, either white or black.\nThe game starts with 2 white pieces and 2 black pieces in the center of the board.\n\nThe goal of the game is to have the most pieces on the board when the game ends.\nThis is done by placing pieces on the board in such a way that you flip your opponent's pieces.\n\nA move is valid if it results in at least one piece being flipped.\nA move is invalid if it results in no pieces being flipped.\n\nA piece is flipped if it is between two of you pieces on opposing sides, the same applies if multiple pieces are surrounded.\n\nThe game ends when there are no more valid moves left.\n\nTo place a piece, enter the coordinates of the square you want to place your piece on.\nFor example, to place a piece on the top left square, enter 'a1'.\n\nTo exit the game, enter 'exit'.")
+        menu()
 
 def singleplayer(difficulty):    # Singleplayer mode with 3 difficulties
     '''easy: plays any valid possible move
@@ -42,10 +42,7 @@ def multiplayer():    # Multiplayer mode's main function, changes turns and call
             move = get_move()
         place_piece(board, turn, move)
         
-        if turn == "W":
-            turn = "B"
-        else:
-            turn = "W"
+        turn = "B" if turn == "W" else "W"
     
     if game_over(board, turn):
         count_points(board)
@@ -57,7 +54,7 @@ def print_board(board, turn):    # Prints the board
     print("\n  A B C D E F G H")
     print("\nIt is " + turn + "'s turn.")
 
-def check_flips(board, turn, move):    # Checks and returns a list if there are any possible flips given the board, turn and move
+def get_flippable_pieces(board, turn, move):    # Checks and returns a list if there are any possible flips given the board, turn and move
     flips = []
     x, y = move[0], move[1]
     
@@ -89,31 +86,27 @@ def place_piece(board, turn, move):    # Places a piece on the board and flips t
     x, y = move[0], move[1]
     board[y][x] = turn
     
-    for x_, y_ in check_flips(board, turn, move):
+    for x_, y_ in get_flippable_pieces(board, turn, move):
         board[y_][x_] = turn
 
-def check_valid_move(board, turn, move):    # Uses check_flips to check if a move is valid and is within the board
+def check_valid_move(board, turn, move):    # Uses get_flippable_pieces to check if a move is valid and is within the board
     
     x, y = move[0], move[1]
     
     if board[y][x] == '.':
-      if check_flips(board, turn, move) == []:
-          return False
-    
-      else:
-          return True
+      return get_flippable_pieces(board, turn, move)
 
 def get_move():    # Gets the move from the user and converts it into coordinates
     
-    move = input("\nPlease enter your move: ")
+    move = input("\nPlease enter your move: ").lower()
     if move == 'exit':
         exit()
-        
+    
     else:
-        move = list(move.lower())
+        move = list(move)
         move[0] = ord(move[0]) - 97
         move[1] = int(move[1]) - 1
-        
+
     return move
 
 def count_points(board):    # Counts the points of each player and prints it
