@@ -24,6 +24,8 @@ def menu():    # Asks the user which mode they want to play
     if menu_select == 3:
         print("\nHow to play:\n\nThe game is played on a board with 8 rows and 8 columns, with a total of 64 squares.\nEach player has 32 pieces, either white or black.\nThe game starts with 2 white pieces and 2 black pieces in the center of the board.\n\nThe goal of the game is to have the most pieces on the board when the game ends.\nThis is done by placing pieces on the board in such a way that you flip your opponent's pieces.\n\nA move is valid if it results in at least one piece being flipped.\nA move is invalid if it results in no pieces being flipped.\n\nA piece is flipped if it is between two of you pieces on opposing sides, the same applies if multiple pieces are surrounded.\n\nThe game ends when there are no more valid moves left.\n\nTo place a piece, enter the coordinates of the square you want to place your piece on.\nFor example, to place a piece on the top left square, enter 'a1'.\n\nTo exit the game, enter 'exit'.")
         menu()
+        
+        
 
 def singleplayer(difficulty):    # Singleplayer mode with 3 difficulties
     '''easy: plays any valid possible move
@@ -35,7 +37,7 @@ def multiplayer(time_limit):    # Multiplayer mode's main function, changes turn
     
     turn = "W"
 
-    game_loop()
+    game_loop("multiplayer", time_limit, turn)
     
     if game_over(board, turn):
         count_points(board)
@@ -89,8 +91,9 @@ def check_valid_move(board, turn, move):    # Uses get_flippable_pieces to check
     
     if board[y][x] == '.':
       return get_flippable_pieces(board, turn, move)
+  
 
-def move():    # Gets the move from the user and converts it into coordinates
+def move(turn):    # Gets the move from the user and converts it into coordinates
     
     move = input("\nPlease enter your move: ").lower()
     if move == 'exit':
@@ -103,30 +106,36 @@ def move():    # Gets the move from the user and converts it into coordinates
 
     while not check_valid_move(board, turn, move):
         print("\nInvalid move.")
-        move = get_move()
+        move = move()
         
     place_piece(board, turn, move)
 
-def time_input(time_limit):
-    input_thread = threading.Thread(target = move)
+def time_input(time_limit, turn):
+    exit_event = threading.Event()
+    def move_wrapper():
+        while not exit_event.is_set():
+            move(turn)
+        
+    input_thread = threading.Thread(target = move_wrapper)
     input_thread.start()
     input_thread.join(timeout = time_limit)
+    exit_event.set()
 
     if input_thread.is_alive():
-        input_thread.terminate()
+        exit_event.set()
         print("Time's up! Next player!")
 
-def game_loop(mode, time_limit):
+def game_loop(mode, time_limit, turn):
     if mode == "singleplayer":
         pass
         
     else:
-        if time_limit > 0
+        if time_limit > 0:
             while not game_over(board, turn):
 
                 print_board(board, turn)
         
-                input_limit(time_limit)
+                time_input(time_limit, turn)
         
                 turn = "B" if turn == "W" else "W"
                 
@@ -135,7 +144,7 @@ def game_loop(mode, time_limit):
 
                 print_board(board, turn)
         
-                move()
+                move(turn)
         
                 turn = "B" if turn == "W" else "W"
 
