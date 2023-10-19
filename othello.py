@@ -1,3 +1,6 @@
+import time
+import threading
+
 board = [['.' for x in range(8)] for y in range(8)]    # Creates the board
 board[3][3] = 'W'
 board[4][4] = 'W'
@@ -16,7 +19,8 @@ def menu():    # Asks the user which mode they want to play
         difficulty = input("\nSingle-player\nSelect difficulty:\n1. Easy\n2. Intermediate\n3. Hard\n > ")
         singleplayer(difficulty)
     if menu_select == 2:
-        multiplayer()
+        time_limit = int(input("Seconds per move (0 for unlimited): "))
+        multiplayer(time_limit)
     if menu_select == 3:
         print("\nHow to play:\n\nThe game is played on a board with 8 rows and 8 columns, with a total of 64 squares.\nEach player has 32 pieces, either white or black.\nThe game starts with 2 white pieces and 2 black pieces in the center of the board.\n\nThe goal of the game is to have the most pieces on the board when the game ends.\nThis is done by placing pieces on the board in such a way that you flip your opponent's pieces.\n\nA move is valid if it results in at least one piece being flipped.\nA move is invalid if it results in no pieces being flipped.\n\nA piece is flipped if it is between two of you pieces on opposing sides, the same applies if multiple pieces are surrounded.\n\nThe game ends when there are no more valid moves left.\n\nTo place a piece, enter the coordinates of the square you want to place your piece on.\nFor example, to place a piece on the top left square, enter 'a1'.\n\nTo exit the game, enter 'exit'.")
         menu()
@@ -27,26 +31,16 @@ def singleplayer(difficulty):    # Singleplayer mode with 3 difficulties
     hard: looks 3 layers deep and plays the path that results in the most flips while assuming the opponent will play the path that minimizes losses'''
     pass
 
-def multiplayer():    # Multiplayer mode's main function, changes turns and calls other functions
+def multiplayer(time_limit):    # Multiplayer mode's main function, changes turns and calls other functions
     
     turn = "W"
-    
-    while not game_over(board, turn):
 
-        print_board(board, turn)
-        
-        move = get_move()
-        
-        while not check_valid_move(board, turn, move):
-            print("\nInvalid move.")
-            move = get_move()
-        place_piece(board, turn, move)
-        
-        turn = "B" if turn == "W" else "W"
+    game_loop()
     
     if game_over(board, turn):
         count_points(board)
         print("\nGame over!")
+        
         
 def print_board(board, turn):    # Prints the board
     for ycount, row in enumerate(board):
@@ -96,7 +90,7 @@ def check_valid_move(board, turn, move):    # Uses get_flippable_pieces to check
     if board[y][x] == '.':
       return get_flippable_pieces(board, turn, move)
 
-def get_move():    # Gets the move from the user and converts it into coordinates
+def move():    # Gets the move from the user and converts it into coordinates
     
     move = input("\nPlease enter your move: ").lower()
     if move == 'exit':
@@ -107,7 +101,58 @@ def get_move():    # Gets the move from the user and converts it into coordinate
         move[0] = ord(move[0]) - 97
         move[1] = int(move[1]) - 1
 
-    return move
+    while not check_valid_move(board, turn, move):
+        print("\nInvalid move.")
+        move = get_move()
+        
+    place_piece(board, turn, move)
+
+def time_input(time_limit):
+    input_thread = threading.Thread(target = move)
+    input_thread.start()
+    input_thread.join(timeout = time_limit)
+
+    if input_thread.is_alive():
+        input_thread.terminate()
+        print("Time's up! Next player!")
+
+def game_loop(mode, time_limit):
+    if mode == "singleplayer":
+        pass
+        
+    else:
+        if time_limit > 0
+            while not game_over(board, turn):
+
+                print_board(board, turn)
+        
+                input_limit(time_limit)
+        
+                turn = "B" if turn == "W" else "W"
+                
+        else:
+            while not game_over(board, turn):
+
+                print_board(board, turn)
+        
+                move()
+        
+                turn = "B" if turn == "W" else "W"
+
+def get_moves(board, turn):
+    pass
+
+def get_points(board, move, turn):
+    pass
+
+def easy(board, time_limit):
+    pass
+
+def intermediate(board, time_limit):
+    pass
+
+def hard(board, time_limit):
+    pass
 
 def count_points(board):    # Counts the points of each player and prints it
     
