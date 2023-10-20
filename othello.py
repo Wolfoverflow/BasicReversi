@@ -1,3 +1,4 @@
+#encoding: utf-8
 import threading
 import random
 
@@ -65,11 +66,11 @@ def get_flippable_pieces(board, turn, move):    # Checks and returns a list if t
             y_ = y + depthy * distance
 
             if x_ < 0 or x_ > 7 or y_ < 0 or y_ > 7 or board[y_][x_] == '.':
-                continue
+                break
 
             if board[y_][x_] == turn:
                 flips.extend(to_flip)
-                continue
+                break
 
             else:
                 to_flip.append((x_, y_))
@@ -129,6 +130,8 @@ def mover(turn):    # Gets the move from the user and converts it into coordinat
         move[1] = int(move[1]) - 1
 
     place_piece(board, turn, move)
+    
+    return 0
 
 def time_input(time_limit, turn):
     exit_event = threading.Event()
