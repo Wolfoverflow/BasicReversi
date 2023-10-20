@@ -18,7 +18,9 @@ def menu():    # Asks the user which mode they want to play
     menu_select = int(input("\n1. Singleplayer\n2. Multiplayer\n3. How to play\n > "))
     if menu_select == 1:
         difficulty = input("\nSingle-player\nSelect difficulty:\n1. Easy\n2. Intermediate\n > ")
-        game_loop("singleplayer", int(input("Time limit in seconds (0 for unlimited): ")), "W", difficulty)
+        game_loop("singleplayer", int(input("Time limit in seconds (0 for unlimited): ")), difficulty)
+        count_points(board)
+
     if menu_select == 2:
         time_limit = int(input("Time limit in seconds (0 for unlimited): "))
         multiplayer(time_limit)
@@ -28,7 +30,7 @@ def menu():    # Asks the user which mode they want to play
 
 
 
-def singleplayer(difficulty):    # Singleplayer mode with 3 difficulties
+def singleplayer(difficulty):    # Singleplayer mode with 2/3 difficulties im not doing hard mode, ill let bowie do that
     if difficulty == "1":
         easy(board)
     if difficulty == "2":
@@ -37,17 +39,14 @@ def singleplayer(difficulty):    # Singleplayer mode with 3 difficulties
     '''easy: plays any valid possible move
     intermediate: plays any valid possible move that results in the most flips
     hard: looks 3 layers deep and plays the path that results in the most flips while assuming the opponent will play the path that minimizes losses. not complete'''
-    pass
 
 def multiplayer(time_limit):    # Multiplayer mode's main function, changes turns and calls other functions
 
     turn = "W"
 
-    game_loop("multiplayer", time_limit, turn)
+    game_loop("multiplayer", time_limit)
 
-    if game_over(board, turn):
-        count_points(board)
-        print("\nGame over!")
+    count_points(board)
 
 
 def print_board(board, turn):    # Prints the board
@@ -154,7 +153,10 @@ def time_input(time_limit, turn):
         exit_event.set()
         print("Time's up! Next player!")
 
-def game_loop(mode, time_limit, turn, difficulty = None):
+def game_loop(mode, time_limit, difficulty = None):
+
+    turn = "W"
+
     if mode == "singleplayer":
         if time_limit > 0:
             while not game_over(board, turn):
