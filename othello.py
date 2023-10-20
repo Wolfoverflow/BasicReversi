@@ -216,14 +216,11 @@ def easy(board):
 def intermediate(board):
     moves = {}
     for pmovec, pmove in enumerate(get_moves(board, "B")):
-        print(get_points(board, "B", pmove))
         moves[pmovec] = get_points(board, "B", pmove)
 
     move = max(moves.values())
     key = list(moves.keys())[list(moves.values()).index(move)]
     move = get_moves(board, "B")[key]
-    print(moves)
-    print(move)
     place_piece(board, "B", move)
 
 def count_points(board):    # Counts the points of each player and prints it
