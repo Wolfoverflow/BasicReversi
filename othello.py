@@ -1,4 +1,3 @@
-import time
 import threading
 import random
 
@@ -24,6 +23,7 @@ def menu():    # Asks the user which mode they want to play
     if menu_select == 2:
         time_limit = int(input("Time limit in seconds (0 for unlimited): "))
         multiplayer(time_limit)
+        
     if menu_select == 3:
         print("\nHow to play:\n\nThe game is played on a board with 8 rows and 8 columns, with a total of 64 squares.\nEach player has 32 pieces, either white or black.\nThe game starts with 2 white pieces and 2 black pieces in the center of the board.\n\nThe goal of the game is to have the most pieces on the board when the game ends.\nThis is done by placing pieces on the board in such a way that you flip your opponent's pieces.\n\nA move is valid if it results in at least one piece being flipped.\nA move is invalid if it results in no pieces being flipped.\n\nA piece is flipped if it is between two of you pieces on opposing sides, the same applies if multiple pieces are surrounded.\n\nThe game ends when there are no more valid moves left.\n\nTo place a piece, enter the coordinates of the square you want to place your piece on.\nFor example, to place a piece on the top left square, enter 'a1'.\n")
         menu()
@@ -33,6 +33,7 @@ def menu():    # Asks the user which mode they want to play
 def singleplayer(difficulty):    # Singleplayer mode with 2/3 difficulties im not doing hard mode, ill let bowie do that
     if difficulty == "1":
         easy(board)
+        
     if difficulty == "2":
         intermediate(board)
 
@@ -41,17 +42,14 @@ def singleplayer(difficulty):    # Singleplayer mode with 2/3 difficulties im no
     hard: looks 3 layers deep and plays the path that results in the most flips while assuming the opponent will play the path that minimizes losses. not complete'''
 
 def multiplayer(time_limit):    # Multiplayer mode's main function, changes turns and calls other functions
-
-    turn = "W"
-
     game_loop("multiplayer", time_limit)
-
     count_points(board)
 
 
 def print_board(board, turn):    # Prints the board
     for ycount, row in enumerate(board):
         print(f'{ycount+1} {" ".join(row)}')
+        
     print("\n  A B C D E F G H")
     print("\nIt is " + turn + "'s turn.")
 
@@ -83,7 +81,6 @@ def get_flippable_pieces(board, turn, move):    # Checks and returns a list if t
     return flips
 
 def place_piece(board, turn, move):    # Places a piece on the board and flips the pieces that need to be flipped
-
     x, y = move[0], move[1]
     board[y][x] = turn
 
@@ -113,7 +110,6 @@ def get_points(board, turn, move):    # Returns the total number of pieces that 
     return flipped
 
 def check_valid_move(board, turn, move):    # Uses get_flippable_pieces to check if a move is valid and is within the board
-
     x, y = move[0], move[1]
 
     if board[y][x] == '.':
@@ -121,7 +117,6 @@ def check_valid_move(board, turn, move):    # Uses get_flippable_pieces to check
 
 
 def mover(turn):    # Gets the move from the user and converts it into coordinates
-
     move = input("\nPlease enter your move: ").lower()
 
     move = list(move)
@@ -161,31 +156,30 @@ def game_loop(mode, time_limit, difficulty = None):
         if time_limit > 0:
             while not game_over(board, turn):
                 if turn == "W":
-
                     print_board(board, turn)
 
                     time_input(time_limit, turn)
 
                 else:
                     singleplayer(difficulty)
+                    
                 turn = "B" if turn == "W" else "W"
 
         else:
             while not game_over(board, turn):
                 if turn == "W":
-
                     print_board(board, turn)
 
                     mover(turn)
 
                 else:
                     singleplayer(difficulty)
+                    
                 turn = "B" if turn == "W" else "W"
 
     else:
         if time_limit > 0:
             while not game_over(board, turn):
-
                 print_board(board, turn)
 
                 time_input(time_limit, turn)
@@ -194,7 +188,6 @@ def game_loop(mode, time_limit, difficulty = None):
 
         else:
             while not game_over(board, turn):
-
                 print_board(board, turn)
 
                 mover(turn)
