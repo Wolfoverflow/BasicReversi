@@ -22,7 +22,8 @@ def menu():    # Asks the user which mode they want to play
 
     if menu_select == 2:
         time_limit = int(input("Time limit in seconds (0 for unlimited): "))
-        multiplayer(time_limit)
+        game_loop("multiplayer", time_limit)
+        count_points(board)
         
     if menu_select == 3:
         print("\nHow to play:\n\nThe game is played on a board with 8 rows and 8 columns, with a total of 64 squares.\nEach player has 32 pieces, either white or black.\nThe game starts with 2 white pieces and 2 black pieces in the center of the board.\n\nThe goal of the game is to have the most pieces on the board when the game ends.\nThis is done by placing pieces on the board in such a way that you flip your opponent's pieces.\n\nA move is valid if it results in at least one piece being flipped.\nA move is invalid if it results in no pieces being flipped.\n\nA piece is flipped if it is between two of you pieces on opposing sides, the same applies if multiple pieces are surrounded.\n\nThe game ends when there are no more valid moves left.\n\nTo place a piece, enter the coordinates of the square you want to place your piece on.\nFor example, to place a piece on the top left square, enter 'a1'.\n")
@@ -40,10 +41,6 @@ def singleplayer(difficulty):    # Singleplayer mode with 2/3 difficulties im no
     '''easy: plays any valid possible move
     intermediate: plays any valid possible move that results in the most flips
     hard: looks 3 layers deep and plays the path that results in the most flips while assuming the opponent will play the path that minimizes losses. not complete'''
-
-def multiplayer(time_limit):    # Multiplayer mode's main function, changes turns and calls other functions
-    game_loop("multiplayer", time_limit)
-    count_points(board)
 
 
 def print_board(board, turn):    # Prints the board
@@ -68,11 +65,11 @@ def get_flippable_pieces(board, turn, move):    # Checks and returns a list if t
             y_ = y + depthy * distance
 
             if x_ < 0 or x_ > 7 or y_ < 0 or y_ > 7 or board[y_][x_] == '.':
-                break
+                continue
 
             if board[y_][x_] == turn:
                 flips.extend(to_flip)
-                break
+                continue
 
             else:
                 to_flip.append((x_, y_))
